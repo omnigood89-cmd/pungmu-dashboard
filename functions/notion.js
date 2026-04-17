@@ -17,17 +17,18 @@ export async function onRequest(context) {
   }
 
   try {
-    const { endpoint, body } = await request.json();
+    const req = await request.json();
 
-    // 허용된 엔드포인트만 통과
-    const allowed = [
-      '/v1/databases/',
-      '/v1/pages/',
-    ];
-    const isAllowed = allowed.some(prefix => endpoint.startsWith(prefix));
-    if (!isAllowed) {
-      return new Response(JSON.stringify({ error: 'Endpoint not allowed' }), {
-        status: 403,
+    // dbId 직접 전달 또는 endpoint에서 추출
+    const dbId = req.dbId || (req.endpoint && req.endpoint.match(/databases\/([a-f0-9-]+)/)?.[1]);
+    const filter = req.filter || req.body?.filter;
+    const sorts = req.sorts || req.body?.sorts;
+    const pageSize = req.pageSize || req.body?.page_size || 100;
+    const startCursor = req.startCursor || req.body?.start_cursor;
+
+    if (!dbId) {
+      return new Response(JSON.stringify({ error: 'dbId required' }), {
+        status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -40,14 +41,19 @@ export async function onRequest(context) {
       });
     }
 
-    const notionRes = await fetch(`https://api.notion.com${endpoint}`, {
+    const notionBody = { page_size: pageSize };
+    if (filter) notionBody.filter = filter;
+    if (sorts) notionBody.sorts = sorts;
+    if (startCursor) notionBody.start_cursor = startCursor;
+
+    const notionRes = await fetch(`https://api.notion.com/v1/databases/${dbId}/query`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Notion-Version': '2022-06-28',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body || {}),
+      body: JSON.stringify(notionBody),
     });
 
     const data = await notionRes.json();

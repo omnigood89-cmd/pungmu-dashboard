@@ -407,7 +407,7 @@ async function loadStudentStats() {
 
   classes.forEach(p => {
     const name = getProp(p,'클래스명');
-    const cnt  = p.properties['수강생']?.relation?.length ?? 0;
+    const cnt  = p.properties['현원']?.rollup?.number ?? 0;
     if (name==='BENT') document.getElementById('cnt-bent').textContent = cnt;
     if (name==='JUDY') document.getElementById('cnt-judy').textContent = cnt;
   });

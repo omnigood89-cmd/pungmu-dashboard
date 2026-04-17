@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>뮤엠영어 풍세학원 · 운영 대시보드</title>
+<style>
+:root {
+  --bg:#f7f6f3;--surface:#fff;--surface2:#f0ede8;
+  --border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.16);
+  --text:#1a1917;--text2:#6b6860;--text3:#a09d98;
+  --green:#2d7a4f;--green-bg:#e8f5ee;
+  --amber:#8a5e1a;--amber-bg:#fef3dc;
+  --red:#a32d2d;--red-bg:#fceaea;
+  --blue:#185fa5;--blue-bg:#e6f1fb;
+  --teal:#1D9E75;--teal-bg:#e1f5ee;
+  --r:10px;--rs:6px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1a1917;--surface:#252320;--surface2:#2e2c29;
+    --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.16);
+    --text:#f0ede8;--text2:#a09d98;--text3:#6b6860;
+    --green:#5cb97e;--green-bg:#0f2e1d;
+    --amber:#e0a84a;--amber-bg:#2a1f08;
+    --red:#e06060;--red-bg:#2a0f0f;
+    --blue:#6aabec;--blue-bg:#0c1f38;
+    --teal:#4dc99a;--teal-bg:#082e1e;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Apple SD Gothic Neo',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+/* topbar */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.tl{display:flex;align-items:center;gap:12px}
+.logo{width:28px;height:28px;background:var(--text);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.logo span{color:var(--surface);font-size:12px;font-weight:700}
+.ttitle{font-size:14px;font-weight:600}
+.tsub{font-size:11px;color:var(--text3);margin-top:1px}
+.tr{display:flex;align-items:center;gap:8px}
+.spill{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);background:var(--surface2);padding:4px 10px;border-radius:20px}
+.sdot{width:6px;height:6px;border-radius:50%;background:#97C459;flex-shrink:0}
+.sdot.ld{background:#FAC775;animation:pulse 1.2s ease-in-out infinite}
+.sdot.er{background:#E24B4A}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.rbtn{font-size:12px;padding:5px 12px;background:transparent;border:1px solid var(--border2);border-radius:var(--rs);color:var(--text2);cursor:pointer}
+.rbtn:hover{background:var(--surface2);color:var(--text)}
+/* main */
+.main{max-width:1100px;margin:0 auto;padding:24px 24px 48px}
+.notice{background:var(--amber-bg);border:1px solid rgba(138,94,26,.2);border-radius:var(--r);padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--amber);line-height:1.6;display:none}
+.notice.show{display:block}
+.notice code{background:rgba(138,94,26,.15);padding:1px 5px;border-radius:3px;font-size:11px}
+/* sections */
+.sec{margin-bottom:28px}
+.sch{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.slabel{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+.ytabs{display:flex;gap:4px}
+.ytab{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s}
+.ytab.on{background:var(--text);color:var(--surface);border-color:var(--text)}
+/* grids */
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:700px){.g4{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}}
+/* metric cards */
+.mc{background:var(--surface2);border-radius:var(--r);padding:14px 16px}
+.ml{font-size:11px;color:var(--text2);margin-bottom:6px}
+.mv{font-size:24px;font-weight:600;line-height:1;color:var(--text)}
+.mv.gr{color:var(--green)}.mv.am{color:var(--amber)}.mv.rd{color:var(--red)}.mv.bl{color:var(--blue)}.mv.tl{color:var(--teal)}
+.ms{font-size:11px;color:var(--text3);margin-top:5px}
+/* cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.chead{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.ctitle{font-size:13px;font-weight:500}
+.cnote{font-size:11px;color:var(--text3);background:var(--surface2);padding:2px 8px;border-radius:20px}
+/* list rows */
+.lrow{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border)}
+.lrow:last-child{border-bottom:none}
+.lname{font-size:13px;color:var(--text)}
+.lmeta{font-size:11px;color:var(--text2);margin-top:1px}
+/* badges */
+.badge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.bgr{background:var(--green-bg);color:var(--green)}
+.bam{background:var(--amber-bg);color:var(--amber)}
+.brd{background:var(--red-bg);color:var(--red)}
+.bbl{background:var(--blue-bg);color:var(--blue)}
+.bgz{background:var(--surface2);color:var(--text2)}
+/* states */
+.empty{font-size:13px;color:var(--text3);padding:20px;text-align:center}
+.lding{display:flex;align-items:center;justify-content:center;gap:8px;padding:20px;font-size:12px;color:var(--text3)}
+.spin{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--text2);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* divider */
+.divider{height:1px;background:var(--border);margin:24px 0}
+/* bar charts */
+.bwrap{padding:14px 16px}
+.bitem{margin-bottom:10px}.bitem:last-child{margin-bottom:0}
+.btop{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.bname{font-size:12px;color:var(--text2)}.bname.mid{color:var(--teal);font-weight:500}
+.bright{display:flex;align-items:center;gap:8px}
+.bval{font-size:12px;font-weight:500;color:var(--text)}
+.bcnt{font-size:11px;color:var(--text3)}
+.bpct{font-size:11px;color:var(--text3);width:28px;text-align:right}
+.btrack{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.btrack.lg{height:6px}
+.bfill{height:100%;border-radius:4px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+.bmonth{font-size:11px;color:var(--text3);margin-bottom:4px}
+.brow{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.brow:last-child{margin-bottom:0}
+.brow .btrack{flex:1}
+.brow .bamt{font-size:11px;color:var(--text2);width:58px;flex-shrink:0}
+.legend{display:flex;gap:14px;padding:0 16px 12px;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.sfooter{display:flex;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text2)}
+.sfooter strong{color:var(--text);font-weight:600}
+/* stags */
+.stag{font-size:10px;padding:1px 7px;border-radius:3px;font-weight:500}
+.seng{background:var(--blue-bg);color:var(--blue)}
+.spol{background:var(--green-bg);color:var(--green)}
+/* tasks */
+.tboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media(max-width:600px){.tboard{grid-template-columns:1fr}}
+.tcol{background:var(--surface2);border-radius:var(--r);padding:10px}
+.tct{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px}
+.titem{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;margin-bottom:6px;font-size:12px;color:var(--text)}
+.titem:last-child{margin-bottom:0}
+.tcat{font-size:10px;color:var(--text3);margin-top:3px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tl">
+    <div class="logo"><span>뮤</span></div>
+    <div>
+      <div class="ttitle">뮤엠영어 풍세학원</div>
+      <div class="tsub" id="last-updated">초기화 중...</div>
+    </div>
+  </div>
+  <div class="tr">
+    <div class="spill">
+      <div class="sdot ld" id="sdot"></div>
+      <span id="stext">연결 중</span>
+    </div>
+    <button class="rbtn" onclick="loadAll()">↻ 새로고침</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="notice" id="notice">
+    <strong>Notion 연결 필요</strong><br>
+    Cloudflare Pages 환경변수에 <code>NOTION_TOKEN</code>을 설정해주세요.<br>
+    Settings → Environment variables → Add variable → <code>NOTION_TOKEN</code> = <code>ntn_xxxxxxx</code>
+  </div>
+
+  <!-- 운영 현황 -->
+  <div class="sec">
+    <div class="sch"><div class="slabel">운영 현황</div></div>
+    <div class="g3">
+      <div class="mc"><div class="ml">재원생</div><div class="mv gr" id="cnt-active">-</div><div class="ms">현재 수강중</div></div>
+      <div class="mc"><div class="ml">휴원생</div><div class="mv am" id="cnt-pause">-</div><div class="ms">일시 중단</div></div>
+      <div class="mc"><div class="ml">퇴원생</div><div class="mv rd" id="cnt-left">-</div><div class="ms">누적</div></div>
+    </div>
+  </div>
+
+  <!-- 수업 현황 -->
+  <div class="sec">
+    <div class="sch"><div class="slabel">수업 현황</div></div>
+    <div class="g4">
+      <div class="mc"><div class="ml">BENT 현원</div><div class="mv" id="cnt-bent">-</div><div class="ms">이한별 원장</div></div>
+      <div class="mc"><div class="ml">JUDY 현원</div><div class="mv" id="cnt-judy">-</div><div class="ms">임민주 교사</div></div>
+      <div class="mc"><div class="ml">주5회</div><div class="mv" id="cnt-5">-</div><div class="ms">정규</div></div>
+      <div class="mc"><div class="ml">주4회↓</div><div class="mv" id="cnt-reduced">-</div><div class="ms">주4·3회</div></div>
+    </div>
+  </div>
+
+  <!-- 교재 / AST -->
+  <div class="sec">
+    <div class="g2">
+      <div class="card">
+        <div class="chead"><div class="ctitle">이번달 교재 완료예정</div><div class="cnote" id="cnt-books">-</div></div>
+        <div id="list-books"><div class="lding"><div class="spin"></div>불러오는 중</div></div>
+      </div>
+      <div class="card">
+        <div class="chead"><div class="ctitle">AST 미완료</div><div class="cnote" id="cnt-ast">-</div></div>
+        <div id="list-ast"><div class="lding"><div class="spin"></div>불러오는 중</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 입회 / 상담 -->
+  <div class="sec">
+    <div class="g2">
+      <div class="card">
+        <div class="chead"><div class="ctitle">입회 현황</div><div class="cnote" id="cnt-consult">-</div></div>
+        <div id="list-consult"><div class="lding"><div class="spin"></div>불러오는 중</div></div>
+      </div>
+      <div class="card">
+        <div class="chead"><div class="ctitle">후속 필요 상담</div><div class="cnote" id="cnt-followup">-</div></div>
+        <div id="list-followup"><div class="lding"><div class="spin"></div>불러오는 중</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 매출 -->
+  <div class="sec">
+    <div class="sch">
+      <div class="slabel">매출 · 지출 · 순수익</div>
+      <div class="ytabs">
+        <button class="ytab on" onclick="switchYear(2026,this)">2026년</button>
+        <button class="ytab" onclick="switchYear(2025,this)">2025년</button>
+      </div>
+    </div>
+    <div class="g3" style="margin-bottom:12px">
+      <div class="mc"><div class="ml">이번달 청구</div><div class="mv bl" id="fin-charge">-</div><div class="ms" id="fin-sub">-</div></div>
+      <div class="mc"><div class="ml">이번달 입금</div><div class="mv gr" id="fin-income">-</div><div class="ms">수납대장 기준</div></div>
+      <div class="mc"><div class="ml">이번달 지출</div><div class="mv am" id="fin-expense">-</div><div class="ms">비용 관리 DB</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:12px">
+      <div class="card">
+        <div class="chead">
+          <div class="ctitle">월별 매출 추이</div>
+          <div style="display:flex;gap:6px"><span class="stag seng">청구</span><span class="stag spol">입금</span></div>
+        </div>
+        <div class="bwrap" id="revenue-chart"></div>
+      </div>
+      <div class="card">
+        <div class="chead"><div class="ctitle">과목별 비중</div><div class="cnote" id="source-year">-</div></div>
+        <div class="bwrap" id="source-chart"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chead"><div class="ctitle">코스별 매출</div><div class="cnote">2026년 4월 · 중등부 17명 분리</div></div>
+      <div class="legend">
+        <div class="li"><div class="ld" style="background:#378ADD"></div>초등부</div>
+        <div class="li"><div class="ld" style="background:#1D9E75"></div>중등부</div>
+      </div>
+      <div class="g3" style="padding:0 16px 14px;gap:10px">
+        <div class="mc"><div class="ml">초등부 매출</div><div class="mv" id="elem-total">-</div><div class="ms" id="elem-cnt">-</div></div>
+        <div class="mc"><div class="ml">중등부 매출</div><div class="mv tl" id="mid-total">-</div><div class="ms" id="mid-cnt">-</div></div>
+        <div class="mc"><div class="ml">영어 합계</div><div class="mv gr" id="grand-total">-</div><div class="ms">영어 과목 기준</div></div>
+      </div>
+      <div class="bwrap" id="course-chart"></div>
+      <div class="sfooter"><span>총 영어 매출</span><strong id="course-grand">-</strong></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 업무 관리 -->
+  <div class="sec">
+    <div class="sch"><div class="slabel">업무 관리</div></div>
+    <div class="tboard">
+      <div class="tcol"><div class="tct">예정</div><div id="tasks-todo"><div class="empty" style="font-size:12px;padding:8px">-</div></div></div>
+      <div class="tcol"><div class="tct">진행중</div><div id="tasks-doing"><div class="empty" style="font-size:12px;padding:8px">-</div></div></div>
+      <div class="tcol"><div class="tct">완료</div><div id="tasks-done"><div class="empty" style="font-size:12px;padding:8px">-</div></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB = {
+  students:    '692e0f614ba04756b43b725f581e1a15',
+  classes:     'a66bb2ef34134cf6a149989c5ef1b741',
+  progress:    'b58d2b64b6a34b2c868af67f0c7fbc99',
+  ast:         'cf282bd1646842ad93f096b3abf43ac1',
+  newConsult:  'd65b400b2314434ba28f7876d83543d2',
+  mgmtConsult: '53fb862eeb3e483a9ccc01ba77eb086b',
+  expense:     '1587a1ec9a854450af02c985ae0e4002',
+  tasks:       '544c27edbc0d48a49eb640e2ef9634c8',
+};
+
+const REVENUE = {
+  by_source:{
+    '2025_영어':{'6':{charge:12567500,income:12577500},'7':{charge:13007000,income:13247000},'8':{charge:11889500,income:11869500},'9':{charge:13340000,income:13340000},'10':{charge:13017500,income:13017500},'11':{charge:12600000,income:12230000},'12':{charge:12817500,income:12772500}},
+    '2025_폴리오':{'7':{charge:205000,income:410000},'8':{charge:300000,income:300000},'9':{charge:560000,income:560000},'10':{charge:590000,income:590000},'11':{charge:170000,income:0},'12':{charge:45000,income:0}},
+    '2026_영어':{'1':{charge:11673500,income:11593500},'2':{charge:12866000,income:13281000},'3':{charge:16650000,income:17090000},'4':{charge:16343000,income:16613000}},
+    '2026_폴리오':{'1':{charge:170000,income:0},'2':{charge:415000,income:0},'3':{charge:440000,income:0},'4':{charge:270000,income:0}},
+  },
+  combined:{
+    '2025-06':{charge:12567500,income:12577500},'2025-07':{charge:13212000,income:13657000},
+    '2025-08':{charge:12189500,income:12169500},'2025-09':{charge:13900000,income:13900000},
+    '2025-10':{charge:13607500,income:13607500},'2025-11':{charge:12770000,income:12230000},
+    '2025-12':{charge:12862500,income:12772500},
+    '2026-01':{charge:11843500,income:11593500},'2026-02':{charge:13281000,income:13281000},
+    '2026-03':{charge:17090000,income:17090000},'2026-04':{charge:16613000,income:16613000},
+  }
+};
+
+const COURSES=[
+  {course:'Ph',    students:15,revenue:2950000,isMiddle:false,color:'#378ADD'},
+  {course:'Spc',   students:12,revenue:2547500,isMiddle:false,color:'#7F77DD'},
+  {course:'중등부', students:17,revenue:4250000,isMiddle:true, color:'#1D9E75'},
+  {course:'Ybr',   students:7, revenue:1508000,isMiddle:false,color:'#E24B4A'},
+  {course:'WG',    students:7, revenue:1390000,isMiddle:false,color:'#5DCAA5'},
+  {course:'YG',    students:4, revenue:880000, isMiddle:false,color:'#BA7517'},
+  {course:'Rlw',   students:3, revenue:720000, isMiddle:false,color:'#85B7EB'},
+  {course:'Gsw',   students:3, revenue:700000, isMiddle:false,color:'#639922'},
+  {course:'Brw',   students:3, revenue:657500, isMiddle:false,color:'#F0997B'},
+  {course:'YGprep',students:2, revenue:460000, isMiddle:false,color:'#FAC775'},
+  {course:'R',     students:2, revenue:400000, isMiddle:false,color:'#EF9F27'},
+  {course:'AL',    students:1, revenue:190000, isMiddle:false,color:'#B5D4F4'},
+].sort((a,b)=>b.revenue-a.revenue);
+
+let currentYear = 2026;
+
+// ── Notion API (Worker 프록시) ──────────────────
+async function notionQuery(dbId, filter=null, sorts=null, pageSize=100) {
+  const body = { page_size: pageSize };
+  if (filter) body.filter = filter;
+  if (sorts)  body.sorts  = sorts;
+
+  const res = await fetch('/notion', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      endpoint: `/v1/databases/${dbId}/query`,
+      body,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || `HTTP ${res.status}`);
+  }
+
+  const data = await res.json();
+  if (data.object === 'error') throw new Error(data.message);
+
+  let results = data.results || [];
+  // 페이지네이션
+  let cursor = data.next_cursor;
+  while (data.has_more && cursor && results.length < 500) {
+    const r2 = await fetch('/notion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ endpoint: `/v1/databases/${dbId}/query`, body: { ...body, start_cursor: cursor } }),
+    });
+    const d2 = await r2.json();
+    results = results.concat(d2.results || []);
+    cursor = d2.next_cursor;
+    if (!d2.has_more) break;
+  }
+  return results;
+}
+
+function getProp(page, name) {
+  const p = page.properties[name];
+  if (!p) return null;
+  switch(p.type) {
+    case 'title':        return p.title.map(t=>t.plain_text).join('');
+    case 'rich_text':    return p.rich_text.map(t=>t.plain_text).join('');
+    case 'select':       return p.select?.name || null;
+    case 'multi_select': return p.multi_select.map(s=>s.name);
+    case 'checkbox':     return p.checkbox;
+    case 'number':       return p.number;
+    case 'date':         return p.date?.start || null;
+    case 'rollup':
+      if (p.rollup?.type==='number') return p.rollup.number;
+      if (p.rollup?.type==='array')  return p.rollup.array.length;
+      return null;
+    case 'formula':      return p.formula?.number ?? p.formula?.string ?? null;
+    case 'relation':     return p.relation.length;
+    case 'phone_number': return p.phone_number;
+    default: return null;
+  }
+}
+
+// ── 헬퍼 ──────────────────────────────────────
+function fmt(n) {
+  if (n>=10000000) return (n/10000000).toFixed(1)+'천만';
+  if (n>=1000000)  return (n/10000).toFixed(0)+'만';
+  return n.toLocaleString()+'원';
+}
+function fmtFull(n) { return n.toLocaleString()+'원'; }
+function setStatus(s,m) {
+  const d=document.getElementById('sdot'), t=document.getElementById('stext');
+  d.className='sdot'+(s==='loading'?' ld':s==='error'?' er':'');
+  t.textContent=m;
+}
+function now() { return new Date().toLocaleString('ko-KR',{month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}); }
+
+// ── 노션 데이터 로더 ───────────────────────────
+async function loadStudentStats() {
+  const [students, classes] = await Promise.all([
+    notionQuery(DB.students),
+    notionQuery(DB.classes),
+  ]);
+  let 재원=0, 휴원=0, 퇴원=0, 주5=0, 주4=0;
+  students.forEach(p => {
+    const st = getProp(p,'등록상태');
+    if (st==='재원') 재원++;
+    else if (st==='휴원') 휴원++;
+    else if (st==='퇴원') 퇴원++;
+    const fr = getProp(p,'주간수업횟수');
+    if (fr==='주5회') 주5++;
+    else if (fr==='주4회'||fr==='주3회') 주4++;
+  });
+  document.getElementById('cnt-active').textContent  = 재원;
+  document.getElementById('cnt-pause').textContent   = 휴원;
+  document.getElementById('cnt-left').textContent    = 퇴원;
+  document.getElementById('cnt-5').textContent       = 주5;
+  document.getElementById('cnt-reduced').textContent = 주4;
+
+  classes.forEach(p => {
+    const name = getProp(p,'클래스명');
+    const cnt  = p.properties['수강생']?.relation?.length ?? 0;
+    if (name==='BENT') document.getElementById('cnt-bent').textContent = cnt;
+    if (name==='JUDY') document.getElementById('cnt-judy').textContent = cnt;
+  });
+}
+
+async function loadProgressBooks() {
+  const el = document.getElementById('list-books');
+  try {
+    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth()+1, 1).toISOString().split('T')[0];
+    const pages = await notionQuery(DB.progress,
+      { property:'완료예정일', date:{ before: endOfMonth } },
+      [{ property:'완료예정일', direction:'ascending' }], 50
+    );
+    document.getElementById('cnt-books').textContent = pages.length;
+    if (!pages.length) { el.innerHTML='<div class="empty">완료예정 없음</div>'; return; }
+    el.innerHTML = pages.slice(0,6).map(p => {
+      const name = getProp(p,'학생');
+      const date = getProp(p,'완료예정일');
+      const memo = getProp(p,'메모') || '';
+      return `<div class="lrow"><div><div class="lname">${name}</div><div class="lmeta">${memo}</div></div><div class="lmeta">${date?date.slice(5):''}</div></div>`;
+    }).join('');
+  } catch(e) { el.innerHTML='<div class="empty" style="color:var(--red)">로드 실패</div>'; }
+}
+
+async function loadAST() {
+  const el = document.getElementById('list-ast');
+  try {
+    const pages = await notionQuery(DB.ast,
+      { property:'완료여부', checkbox:{ equals: false } },
+      [{ property:'예약일시', direction:'ascending' }], 20
+    );
+    document.getElementById('cnt-ast').textContent = pages.length;
+    if (!pages.length) { el.innerHTML='<div class="empty">미완료 없음</div>'; return; }
+    el.innerHTML = pages.slice(0,5).map(p => {
+      const name = getProp(p,'학생');
+      const date = getProp(p,'예약일시') || '-';
+      return `<div class="lrow"><div class="lname">${name}</div><span class="badge bam">${date.slice(0,10)}</span></div>`;
+    }).join('');
+  } catch(e) { el.innerHTML='<div class="empty" style="color:var(--red)">로드 실패</div>'; }
+}
+
+async function loadConsult() {
+  const el = document.getElementById('list-consult');
+  try {
+    const pages = await notionQuery(DB.newConsult, null,
+      [{ property:'문의일', direction:'descending' }], 100
+    );
+    const cnt = {문의:0,체험예약:0,체험완료:0,등록:0};
+    const active = [];
+    pages.forEach(p => {
+      const st = getProp(p,'상태');
+      if (st in cnt) cnt[st]++;
+      if (['문의','체험예약','체험완료'].includes(st)) active.push(p);
+    });
+    document.getElementById('cnt-consult').textContent = cnt.문의+cnt.체험예약+cnt.체험완료+cnt.등록;
+    if (!active.length) { el.innerHTML='<div class="empty">진행중인 상담 없음</div>'; return; }
+    const cls = {문의:'bgz',체험예약:'bbl',체험완료:'bam',등록:'bgr',미등록:'brd'};
+    el.innerHTML = active.slice(0,5).map(p => {
+      const name = getProp(p,'이름');
+      const st   = getProp(p,'상태');
+      return `<div class="lrow"><div class="lname">${name}</div><span class="badge ${cls[st]||'bgz'}">${st}</span></div>`;
+    }).join('');
+  } catch(e) { el.innerHTML='<div class="empty" style="color:var(--red)">로드 실패</div>'; }
+}
+
+async function loadFollowup() {
+  const el = document.getElementById('list-followup');
+  try {
+    const pages = await notionQuery(DB.mgmtConsult,
+      { property:'후속필요', checkbox:{ equals: true } },
+      [{ property:'상담일', direction:'descending' }], 20
+    );
+    document.getElementById('cnt-followup').textContent = pages.length;
+    if (!pages.length) { el.innerHTML='<div class="empty">후속 필요 없음</div>'; return; }
+    el.innerHTML = pages.slice(0,5).map(p => {
+      const title = getProp(p,'제목');
+      return `<div class="lrow"><div class="lname">${title}</div><span class="badge brd">후속필요</span></div>`;
+    }).join('');
+  } catch(e) { el.innerHTML='<div class="empty" style="color:var(--red)">로드 실패</div>'; }
+}
+
+async function loadExpense() {
+  try {
+    const t = new Date(), y=t.getFullYear(), m=t.getMonth()+1;
+    const start = `${y}-${String(m).padStart(2,'0')}-01`;
+    const end   = new Date(y,m,1).toISOString().split('T')[0];
+    const pages = await notionQuery(DB.expense,{
+      and:[
+        {property:'지출일',date:{on_or_after:start}},
+        {property:'지출일',date:{before:end}},
+      ]
+    });
+    const total = pages.reduce((s,p)=>s+(getProp(p,'금액')||0),0);
+    document.getElementById('fin-expense').textContent = total>0?fmt(total):'0원';
+  } catch(e) { document.getElementById('fin-expense').textContent='?'; }
+}
+
+async function loadTasks() {
+  try {
+    const pages = await notionQuery(DB.tasks, null,
+      [{property:'날짜',direction:'ascending'}], 100
+    );
+    const g={예정:[],진행중:[],완료:[]};
+    pages.forEach(p=>{
+      const st=getProp(p,'상태'), name=getProp(p,'업무명'), cat=getProp(p,'카테고리');
+      if (st in g) g[st].push({name,cat});
+    });
+    [['예정','tasks-todo'],['진행중','tasks-doing'],['완료','tasks-done']].forEach(([s,id])=>{
+      const items=g[s]||[], el=document.getElementById(id);
+      if (!items.length){el.innerHTML='<div class="empty" style="font-size:12px;padding:8px">없음</div>';return;}
+      el.innerHTML=items.slice(0,5).map(t=>
+        `<div class="titem">${t.name}${t.cat?`<div class="tcat">${t.cat}</div>`:''}</div>`
+      ).join('');
+    });
+  } catch(e) {}
+}
+
+// ── 정적 차트 ─────────────────────────────────
+function renderCourseChart() {
+  const eT=COURSES.filter(c=>!c.isMiddle).reduce((s,c)=>s+c.revenue,0);
+  const mT=COURSES.filter(c=>c.isMiddle).reduce((s,c)=>s+c.revenue,0);
+  const gT=eT+mT;
+  const eCnt=COURSES.filter(c=>!c.isMiddle).reduce((s,c)=>s+c.students,0);
+  const mCnt=COURSES.filter(c=>c.isMiddle).reduce((s,c)=>s+c.students,0);
+  document.getElementById('elem-total').textContent=fmtFull(eT);
+  document.getElementById('elem-cnt').textContent=`${eCnt}명 · 초등부`;
+  document.getElementById('mid-total').textContent=fmtFull(mT);
+  document.getElementById('mid-cnt').textContent=`${mCnt}명 · 중등부`;
+  document.getElementById('grand-total').textContent=fmtFull(gT);
+  document.getElementById('course-grand').textContent=fmtFull(gT);
+  const maxR=Math.max(...COURSES.map(c=>c.revenue));
+  document.getElementById('course-chart').innerHTML=COURSES.map(c=>{
+    const pct=Math.round(c.revenue/maxR*100), share=Math.round(c.revenue/gT*100);
+    return `<div class="bitem">
+      <div class="btop"><div class="bname${c.isMiddle?' mid':''}">${c.course}</div>
+      <div class="bright"><div class="bval">${fmt(c.revenue)}</div><div class="bcnt">${c.students}명</div><div class="bpct">${share}%</div></div></div>
+      <div class="btrack"><div class="bfill" style="width:${pct}%;background:${c.color}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderRevenue(year) {
+  const months=[];
+  for(let m=1;m<=12;m++){
+    const k=`${year}-${String(m).padStart(2,'0')}`;
+    if(REVENUE.combined[k]) months.push({m,...REVENUE.combined[k]});
+  }
+  if(!months.length){document.getElementById('revenue-chart').innerHTML='<div class="empty">데이터 없음</div>';return;}
+  const maxV=Math.max(...months.map(x=>Math.max(x.charge,x.income)));
+  document.getElementById('revenue-chart').innerHTML=months.map(x=>{
+    const cp=Math.round(x.charge/maxV*100), ip=x.income>0?Math.round(x.income/maxV*100):0;
+    return `<div class="bitem">
+      <div class="bmonth">${x.m}월</div>
+      <div class="brow"><div class="btrack lg"><div class="bfill" style="width:${cp}%;background:#378ADD"></div></div><div class="bamt">${fmt(x.charge)}</div></div>
+      <div class="brow"><div class="btrack lg"><div class="bfill" style="width:${ip}%;background:#2d7a4f"></div></div><div class="bamt">${x.income>0?fmt(x.income):'미수납'}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderSource(year) {
+  const e=REVENUE.by_source[`${year}_영어`]||{}, p=REVENUE.by_source[`${year}_폴리오`]||{};
+  let eT=0,pT=0;
+  Object.values(e).forEach(v=>eT+=v.charge||0);
+  Object.values(p).forEach(v=>pT+=v.charge||0);
+  const total=eT+pT;
+  document.getElementById('source-year').textContent=`${year}년`;
+  if(!total){document.getElementById('source-chart').innerHTML='<div class="empty">데이터 없음</div>';return;}
+  const ep=Math.round(eT/total*100),pp=100-ep;
+  document.getElementById('source-chart').innerHTML=`
+    <div class="bitem">
+      <div class="btop"><div class="bname">영어</div><div class="bright"><div class="bval">${fmt(eT)}</div><div class="bpct">${ep}%</div></div></div>
+      <div class="btrack"><div class="bfill" style="width:${ep}%;background:#378ADD"></div></div>
+    </div>
+    <div class="bitem">
+      <div class="btop"><div class="bname">국어논술</div><div class="bright"><div class="bval">${fmt(pT)}</div><div class="bpct">${pp}%</div></div></div>
+      <div class="btrack"><div class="bfill" style="width:${pp}%;background:#2d7a4f"></div></div>
+    </div>
+    <div style="padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--text2);margin-top:8px">
+      연간 총 청구 <strong style="color:var(--text)">${fmtFull(total)}</strong>
+    </div>`;
+}
+
+function renderFinance(year) {
+  const k=`${year}-04`, d=REVENUE.combined[k]||{charge:0,income:0};
+  document.getElementById('fin-charge').textContent=d.charge>0?fmt(d.charge):'-';
+  document.getElementById('fin-sub').textContent=`${year}년 4월`;
+  document.getElementById('fin-income').textContent=d.income>0?fmt(d.income):'미수납';
+}
+
+function switchYear(year,btn) {
+  currentYear=year;
+  document.querySelectorAll('.ytab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  renderRevenue(year); renderSource(year); renderFinance(year);
+}
+
+// ── 전체 로드 ─────────────────────────────────
+async function loadAll() {
+  setStatus('loading','노션 데이터 불러오는 중...');
+  document.getElementById('last-updated').textContent='업데이트 중...';
+  renderRevenue(currentYear); renderSource(currentYear);
+  renderFinance(currentYear); renderCourseChart();
+
+  const results = await Promise.allSettled([
+    loadStudentStats(), loadProgressBooks(), loadAST(),
+    loadConsult(), loadFollowup(), loadExpense(), loadTasks(),
+  ]);
+  const failed = results.filter(r=>r.status==='rejected');
+
+  if (failed.length === 0) {
+    setStatus('ok','노션 연결됨 · 실시간');
+    document.getElementById('last-updated').textContent='마지막 업데이트: '+now();
+    document.getElementById('notice').classList.remove('show');
+  } else {
+    const msg = failed[0]?.reason?.message || '오류';
+    if (msg.includes('NOTION_TOKEN')) {
+      setStatus('error','NOTION_TOKEN 미설정');
+      document.getElementById('notice').classList.add('show');
+    } else {
+      setStatus('error',`${failed.length}개 항목 로드 실패`);
+    }
+    document.getElementById('last-updated').textContent='부분 로드 · '+now();
+    console.error('로드 실패:', failed.map(r=>r.reason?.message));
+  }
+}
+
+// ── 초기화 ────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  renderRevenue(currentYear); renderSource(currentYear);
+  renderFinance(currentYear); renderCourseChart();
+  loadAll();
+});
+</script>
+</body>
+</html>

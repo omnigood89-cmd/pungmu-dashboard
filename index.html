@@ -405,12 +405,17 @@ async function loadStudentStats() {
   document.getElementById('cnt-5').textContent       = 주5;
   document.getElementById('cnt-reduced').textContent = 주4;
 
-  classes.forEach(p => {
-    const name = getProp(p,'클래스명');
-    const cnt  = p.properties['현원']?.rollup?.number ?? 0;
-    if (name==='BENT') document.getElementById('cnt-bent').textContent = cnt;
-    if (name==='JUDY') document.getElementById('cnt-judy').textContent = cnt;
+  const BENT_ID = '341ca0f2-c458-8065-b389-c9b76f9eb181';
+  const JUDY_ID = '341ca0f2-c458-8002-8b0f-c3da8470bddb';
+  let bentCnt = 0, judyCnt = 0;
+  students.forEach(p => {
+    if (getProp(p,'등록상태') !== '재원') return;
+    const schedule = p.properties['수업스케줄']?.relation || [];
+    if (schedule.some(r => r.id === BENT_ID)) bentCnt++;
+    if (schedule.some(r => r.id === JUDY_ID)) judyCnt++;
   });
+  document.getElementById('cnt-bent').textContent = bentCnt;
+  document.getElementById('cnt-judy').textContent = judyCnt;
 }
 
 async function loadProgressBooks() {

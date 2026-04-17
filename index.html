@@ -214,10 +214,11 @@ body{font-family:'Apple SD Gothic Neo',-apple-system,sans-serif;background:var(-
         <button class="ytab" onclick="switchYear(2025,this)">2025년</button>
       </div>
     </div>
-    <div class="g3" style="margin-bottom:12px">
+    <div class="g4" style="margin-bottom:12px">
       <div class="mc"><div class="ml">이번달 청구</div><div class="mv bl" id="fin-charge">-</div><div class="ms" id="fin-sub">-</div></div>
       <div class="mc"><div class="ml">이번달 입금</div><div class="mv gr" id="fin-income">-</div><div class="ms">수납대장 기준</div></div>
       <div class="mc"><div class="ml">이번달 지출</div><div class="mv am" id="fin-expense">-</div><div class="ms">비용 관리 DB</div></div>
+      <div class="mc"><div class="ml">이번달 순수익</div><div class="mv gr" id="fin-profit">-</div><div class="ms">입금 - 지출</div></div>
     </div>
     <div class="g2" style="margin-bottom:12px">
       <div class="card">
@@ -507,6 +508,16 @@ async function loadExpense() {
     });
     const total = pages.reduce((s,p)=>s+(getProp(p,'금액')||0),0);
     document.getElementById('fin-expense').textContent = total>0?fmt(total):'0원';
+    // 순수익 계산 (입금 - 지출)
+    const incomeEl = document.getElementById('fin-income').textContent;
+    const incomeVal = incomeEl === '미수납' ? 0 : parseFloat(incomeEl.replace(/[^0-9.]/g,'')) * (incomeEl.includes('천만') ? 10000000 : incomeEl.includes('만') ? 10000 : 1);
+    if (incomeVal > 0 && total >= 0) {
+      const profit = incomeVal - total;
+      const profitEl = document.getElementById('fin-profit');
+      profitEl.textContent = fmt(Math.abs(profit));
+      profitEl.className = 'mv ' + (profit >= 0 ? 'gr' : 'rd');
+      if (profit < 0) profitEl.textContent = '-' + profitEl.textContent;
+    }
   } catch(e) { document.getElementById('fin-expense').textContent='?'; }
 }
 
